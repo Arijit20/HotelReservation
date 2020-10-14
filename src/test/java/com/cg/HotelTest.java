@@ -25,9 +25,9 @@ public class HotelTest {
 	
 	@SuppressWarnings("deprecation")
 	@Test
-	public void checkCheapestHotelForRegularCustomerConsideringWeekdayAndWeekend() throws ParseException {
+	public void checkCheapestHotelForRegularCustomer() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
-		List<String> hotelList = hotelReservationMain.findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend("10Sep2020","11Sep2020");
+		List<String> hotelList = hotelReservationMain.findCheapestHotels("Regular","10Sep2020","11Sep2020");
 	    List<String> expectedList = new ArrayList<>(Arrays.asList("Lakewood","Bridgewood"));
 	    Assert.assertEquals(expectedList, hotelList);
 	}
@@ -36,7 +36,7 @@ public class HotelTest {
 	@Test
 	public void checkCheapestBestRatedHotelForRegularCustomers() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
-		String hotel = hotelReservationMain.findCheapestBestRatedHotelForRegularCustomer("10Sep2020","11Sep2020");
+		String hotel = hotelReservationMain.findCheapestBestRatedHotel("Regular", "10Sep2020","11Sep2020");
 		Assert.assertEquals("Bridgewood", hotel);
 	}
 	
@@ -44,7 +44,7 @@ public class HotelTest {
 	@Test
 	public void checkBestRatedHotelForRegularCustomers() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
-		String hotel = hotelReservationMain.findBestRatedHotelForRegularCustomers("10Sep2020","11Sep2020");
+		String hotel = hotelReservationMain.findBestRatedHotel("Regular", "10Sep2020","11Sep2020");
 	    Assert.assertEquals("Ridgewood", hotel);
 	}
 	
@@ -52,7 +52,18 @@ public class HotelTest {
 	@Test
 	public void checkCheapestBestRatedHotelForRewardCustomers() throws ParseException{
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
-		String hotel = hotelReservationMain.findCheapestBestRatedHotelForRewardCustomer("10Sep2020", "11Sep2020");
+		String hotel = hotelReservationMain.findCheapestBestRatedHotel("Reward", "10Sep2020", "11Sep2020");
 	    Assert.assertEquals("Ridgewood", hotel);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void checkWithInvalidDateFormat() {
+		HotelReservationMain hotelReservationMain = new HotelReservationMain();
+		try {
+			String hotel = hotelReservationMain.findCheapestBestRatedHotel("Reward", "102020", "11Sep");
+		} catch (Exception e) {
+			Assert.assertEquals("Enter date in proper format", e.getMessage());
+		}
 	}
 }
