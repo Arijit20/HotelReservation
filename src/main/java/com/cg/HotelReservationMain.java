@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class HotelReservationMain {
@@ -23,44 +25,62 @@ public class HotelReservationMain {
 		hotelList.add(BRIDGEWOOD);
 		hotelList.add(RIDGEWOOD);
 	}
-	
+
 	public void convertToDates(String checkin, String checkout) throws ParseException {
 		this.checkinDate = new SimpleDateFormat("ddMMMyyyy").parse(checkin);
 		this.checkoutDate = new SimpleDateFormat("ddMMMyyyy").parse(checkout);
 	}
-	
+
 	public String findCheapestHotelForRegularCustomersInWeekDayRate(String start, String finish) throws ParseException {
 		convertToDates(start, finish);
 		long days = getTotalDays(checkinDate, checkoutDate);
 		List<Long> hotelRentList = hotelList.parallelStream().map(hotel -> hotel.getRegularCustomerWeekdayRate() * days)
-				 .collect(Collectors.toList());
+				.collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
-		Hotel cheapestHotel = hotelList.stream().filter(hotel -> hotel.getRegularCustomerWeekdayRate() * days == minRent).findFirst()
-				.orElse(null);
-		System.out.println("Hotel : "+ cheapestHotel.getHotelName()+" Cost : "+ minRent);
+		Hotel cheapestHotel = hotelList.stream()
+				.filter(hotel -> hotel.getRegularCustomerWeekdayRate() * days == minRent).findFirst().orElse(null);
+		System.out.println("Hotel : " + cheapestHotel.getHotelName() + " Cost : " + minRent);
 		return cheapestHotel.getHotelName();
-	 }
+	}
 
 	public long calculateHotelCost(Hotel hotel, long weekDay, long weekEnds) {
 		return hotel.getRegularCustomerWeekdayRate() * weekDay + hotel.getRegularCustomerWeekendRate() * weekEnds;
 	}
-	
-	public List<String> findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend(String start, String finish) throws ParseException {
+
+	public List<String> findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend(String start, String finish)
+			throws ParseException {
 		convertToDates(start, finish);
 		long days = getTotalDays(checkinDate, checkoutDate);
 		long weekendDays = getWeekendDays(checkinDate, checkoutDate);
 		long weekDays = days - weekendDays;
-		List<Long> hotelRentList = hotelList.stream()
-				.map(hotel -> calculateHotelCost(hotel, weekDays, weekendDays)).collect(Collectors.toList());
+		List<Long> hotelRentList = hotelList.stream().map(hotel -> calculateHotelCost(hotel, weekDays, weekendDays))
+				.collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
 		List<String> cheapHotelList = hotelList.stream()
 				.filter(hotel -> calculateHotelCost(hotel, weekDays, weekendDays) == minRent)
 				.map(hotel -> hotel.getHotelName()).collect(Collectors.toList());
 		for (String hotel : cheapHotelList)
 			System.out.println("Hotel : " + hotel + " Cost : " + minRent);
-        return cheapHotelList;
+		return cheapHotelList;
 	}
-	
+
+	public String findCheapestBestRatedHotelForRegularCustomer(String start, String finish) throws ParseException {
+		convertToDates(start, finish);
+		long days = getTotalDays(checkinDate, checkoutDate);
+		long weekendDays = getWeekendDays(checkinDate, checkoutDate);
+		long weekDays = days - weekendDays;
+		List<Long> hotelRentList = hotelList.parallelStream()
+				.map(hotel -> calculateHotelCost(hotel, weekDays, weekendDays)).collect(Collectors.toList());
+		long minRent = Collections.min(hotelRentList);
+		List<Hotel> cheapHotelList = hotelList.stream()
+				.filter(hotel -> calculateHotelCost(hotel, weekDays, weekendDays) == minRent)
+				.collect(Collectors.toList());
+		Hotel hotel = cheapHotelList.stream().max(Comparator.comparing(Hotel::getRating))
+				.orElseThrow(NoSuchElementException::new);
+		System.out.println("Hotel : " + hotel.getHotelName() + " Rating : " + hotel.getRating() + " Cost : " + minRent);
+		return hotel.getHotelName();
+	}
+
 	private long getWeekendDays(Date checkinDate, Date checkoutDate) {
 		long weekendDays = 0;
 		Calendar startCalendar = Calendar.getInstance();
@@ -74,7 +94,7 @@ public class HotelReservationMain {
 		}
 		return weekendDays;
 	}
-	
+
 	private long getTotalDays(Date startDate, Date endDate) {
 		return ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 	}

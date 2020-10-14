@@ -29,4 +29,11 @@ public class HotelTest {
 	    List<String> expectedList = new ArrayList<>(Arrays.asList("LakeWood","BridgeWood"));
 	    Assert.assertEquals(expectedList, hotelList);
 	}
+	
+	@Test
+	public void checkCheapestBestRatedHotelForRegularCustomers() throws ParseException {
+		HotelReservationMain hotelReservationMain = new HotelReservationMain();
+		String hotel = hotelReservationMain.findCheapestBestRatedHotelForRegularCustomer("10Sep2020","11Sep2020");
+		Assert.assertEquals("BridgeWood", hotel);
+	}
 }
