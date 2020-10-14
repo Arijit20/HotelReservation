@@ -26,7 +26,7 @@ public class HotelReservationMain {
 		hotelList.add(RIDGEWOOD);
 	}
 
-	public void convertToDates(String checkin, String checkout) throws ParseException  {
+	public void convertToDates(String checkin, String checkout) throws ParseException {
 		this.checkinDate = new SimpleDateFormat("ddMMMyyyy").parse(checkin);
 		this.checkoutDate = new SimpleDateFormat("ddMMMyyyy").parse(checkout);
 		this.days = getTotalDays(checkinDate, checkoutDate);
@@ -67,13 +67,13 @@ public class HotelReservationMain {
 	}
 
 	public String findCheapestBestRatedHotel(String type, String startDate, String finishDate) {
-		if(!(type.equals("Reward") || type.equals("Regular")))
+		if (!(type.equals("Reward") || type.equals("Regular")))
 			return "Enter either Reward or Regular";
-			try {
-				convertToDates(startDate, finishDate);
-			} catch (ParseException e) {
+		try {
+			convertToDates(startDate, finishDate);
+		} catch (ParseException e) {
 			return "Enter date in proper format";
-			}
+		}
 		List<Long> hotelRentList = hotelList.parallelStream()
 				.map(hotel -> calculateHotelCost(type, hotel, weekDays, weekendDays)).collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
