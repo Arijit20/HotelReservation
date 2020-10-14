@@ -5,12 +5,17 @@ public class Hotel {
 	private int regularCustomerWeekdayRate;
 	private int regularCustomerWeekendRate;
 	private int rating;
-	
-	public Hotel(String hotelName, int regularCustomerWeekdayRate, int regularCustomerWeekendRate, int rating) {
+	private int rewardCustomerWeekdayRate;
+	private int rewardCustomerWeekendRate;
+
+	public Hotel(String hotelName, int regularCustomerWeekdayRate, int regularCustomerWeekendRate, int rating,
+			int rewardCustomerWeekdayRate, int rewardCustomerWeekendRate) {
 		this.setHotelName(hotelName);
 		this.setRegularCustomerWeekdayRate(regularCustomerWeekdayRate);
 		this.setRegularCustomerWeekendRate(regularCustomerWeekendRate);
 		this.setRating(rating);
+		this.setRewardCustomerWeekdayRate(rewardCustomerWeekdayRate);
+		this.setRewardCustomerWeekendRate(rewardCustomerWeekendRate);
 	}
 
 	public String getHotelName() {
@@ -43,5 +48,21 @@ public class Hotel {
 
 	public void setRating(int rating) {
 		this.rating = rating;
+	}
+
+	public int getRewardCustomerWeekendRate() {
+		return rewardCustomerWeekendRate;
+	}
+
+	public void setRewardCustomerWeekendRate(int rewardCustomerWeekendRate) {
+		this.rewardCustomerWeekendRate = rewardCustomerWeekendRate;
+	}
+
+	public int getRewardCustomerWeekdayRate() {
+		return rewardCustomerWeekdayRate;
+	}
+
+	public void setRewardCustomerWeekdayRate(int rewardCustomerWeekdayRate) {
+		this.rewardCustomerWeekdayRate = rewardCustomerWeekdayRate;
 	}
 }
