@@ -12,11 +12,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class HotelReservationMain {
-	final Hotel LAKEWOOD = new Hotel("LakeWood", 110, 90, 3);
-	final Hotel BRIDGEWOOD = new Hotel("BridgeWood", 150, 50, 4);
-	final Hotel RIDGEWOOD = new Hotel("RidgeWood", 220, 150, 5);
-	Date checkinDate;
-	Date checkoutDate;
+	final Hotel LAKEWOOD = new Hotel("Lakewood", 110, 90, 3);
+	final Hotel BRIDGEWOOD = new Hotel("Bridgewood", 150, 50, 4);
+	final Hotel RIDGEWOOD = new Hotel("Ridgewood", 220, 150, 5);
+	Date checkinDate, checkoutDate;
+	long days, weekDays, weekendDays;
 
 	List<Hotel> hotelList = new ArrayList<>();
 
@@ -29,11 +29,13 @@ public class HotelReservationMain {
 	public void convertToDates(String checkin, String checkout) throws ParseException {
 		this.checkinDate = new SimpleDateFormat("ddMMMyyyy").parse(checkin);
 		this.checkoutDate = new SimpleDateFormat("ddMMMyyyy").parse(checkout);
+		this.days = getTotalDays(checkinDate, checkoutDate);
+		this.weekendDays = getWeekendDays(checkinDate, checkoutDate);
+		this.weekDays = days - weekendDays;
 	}
 
-	public String findCheapestHotelForRegularCustomersInWeekDayRate(String start, String finish) throws ParseException {
-		convertToDates(start, finish);
-		long days = getTotalDays(checkinDate, checkoutDate);
+	public String findCheapestHotelForRegularCustomersInWeekDayRate(String startDate, String finishDate) throws ParseException {
+		convertToDates(startDate, finishDate);
 		List<Long> hotelRentList = hotelList.parallelStream().map(hotel -> hotel.getRegularCustomerWeekdayRate() * days)
 				.collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
@@ -47,12 +49,9 @@ public class HotelReservationMain {
 		return hotel.getRegularCustomerWeekdayRate() * weekDay + hotel.getRegularCustomerWeekendRate() * weekEnds;
 	}
 
-	public List<String> findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend(String start, String finish)
+	public List<String> findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend(String startDate, String finishDate)
 			throws ParseException {
-		convertToDates(start, finish);
-		long days = getTotalDays(checkinDate, checkoutDate);
-		long weekendDays = getWeekendDays(checkinDate, checkoutDate);
-		long weekDays = days - weekendDays;
+		convertToDates(startDate, finishDate);
 		List<Long> hotelRentList = hotelList.stream().map(hotel -> calculateHotelCost(hotel, weekDays, weekendDays))
 				.collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
@@ -64,11 +63,8 @@ public class HotelReservationMain {
 		return cheapHotelList;
 	}
 
-	public String findCheapestBestRatedHotelForRegularCustomer(String start, String finish) throws ParseException {
-		convertToDates(start, finish);
-		long days = getTotalDays(checkinDate, checkoutDate);
-		long weekendDays = getWeekendDays(checkinDate, checkoutDate);
-		long weekDays = days - weekendDays;
+	public String findCheapestBestRatedHotelForRegularCustomer(String startDate, String finishDate) throws ParseException {
+		convertToDates(startDate, finishDate);
 		List<Long> hotelRentList = hotelList.parallelStream()
 				.map(hotel -> calculateHotelCost(hotel, weekDays, weekendDays)).collect(Collectors.toList());
 		long minRent = Collections.min(hotelRentList);
@@ -79,6 +75,14 @@ public class HotelReservationMain {
 				.orElseThrow(NoSuchElementException::new);
 		System.out.println("Hotel : " + hotel.getHotelName() + " Rating : " + hotel.getRating() + " Cost : " + minRent);
 		return hotel.getHotelName();
+	}
+	
+	public String findBestRatedHotelForRegularCustomers(String startDate, String finishDate) throws ParseException{
+		convertToDates(startDate, finishDate);
+		Hotel hotel = hotelList.stream().max(Comparator.comparing(Hotel::getRating)).orElseThrow(NoSuchElementException::new);
+	    long cost = calculateHotelCost(hotel,  weekDays, weekendDays);
+	    System.out.println("Hotel : "+hotel.getHotelName()+" Rating : "+hotel.getRating()+" Cost : "+cost);
+	    return hotel.getHotelName();
 	}
 
 	private long getWeekendDays(Date checkinDate, Date checkoutDate) {

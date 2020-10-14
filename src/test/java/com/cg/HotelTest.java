@@ -15,25 +15,36 @@ import java.util.List;
 
 public class HotelTest {
     
+	@SuppressWarnings("deprecation")
 	@Test
 	public void checkCheapestHotelForRegularCustomerInWeekdayRate() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
 		String hotel = hotelReservationMain.findCheapestHotelForRegularCustomersInWeekDayRate("10Sep2020","11Sep2020");
-	    Assert.assertEquals("LakeWood", hotel);
+	    Assert.assertEquals("Lakewood", hotel);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void checkCheapestHotelForRegularCustomerConsideringWeekdayAndWeekend() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
 		List<String> hotelList = hotelReservationMain.findCheapestHotelForRegularCustomersConsideringWeekdayAndWeekend("10Sep2020","11Sep2020");
-	    List<String> expectedList = new ArrayList<>(Arrays.asList("LakeWood","BridgeWood"));
+	    List<String> expectedList = new ArrayList<>(Arrays.asList("Lakewood","Bridgewood"));
 	    Assert.assertEquals(expectedList, hotelList);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void checkCheapestBestRatedHotelForRegularCustomers() throws ParseException {
 		HotelReservationMain hotelReservationMain = new HotelReservationMain();
 		String hotel = hotelReservationMain.findCheapestBestRatedHotelForRegularCustomer("10Sep2020","11Sep2020");
-		Assert.assertEquals("BridgeWood", hotel);
+		Assert.assertEquals("Bridgewood", hotel);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void checkBestRatedHotelForRegularCustomers() throws ParseException {
+		HotelReservationMain hotelReservationMain = new HotelReservationMain();
+		String hotel = hotelReservationMain.findBestRatedHotelForRegularCustomers("10Sep2020","11Sep2020");
+	    Assert.assertEquals("Ridgewood", hotel);
 	}
 }
