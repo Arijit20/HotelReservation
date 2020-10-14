@@ -47,4 +47,12 @@ public class HotelTest {
 		String hotel = hotelReservationMain.findBestRatedHotelForRegularCustomers("10Sep2020","11Sep2020");
 	    Assert.assertEquals("Ridgewood", hotel);
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void checkCheapestBestRatedHotelForRewardCustomers() throws ParseException{
+		HotelReservationMain hotelReservationMain = new HotelReservationMain();
+		String hotel = hotelReservationMain.findCheapestBestRatedHotelForRewardCustomer("10Sep2020", "11Sep2020");
+	    Assert.assertEquals("Ridgewood", hotel);
+	}
 }
